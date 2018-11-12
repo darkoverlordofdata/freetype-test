@@ -33,4 +33,6 @@ void Update();
 
 void RenderText(char* text, float x, float y, float scale, float* color);
 
+bool Error(char* msg);
+
 #endif  // _NAIN_H

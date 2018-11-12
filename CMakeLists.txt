@@ -31,7 +31,10 @@ set ( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -lglew32" )
 set ( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -lfreetype" )
 set ( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -lopengl32" )
 
-set ( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -w -std=c99 -O3" )
+# flags
+set ( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -w" )
+set ( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99" )
+set ( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3" )
 
 # definitions 
 
@@ -44,6 +47,6 @@ add_executable ( ${PROJECT_NAME} ${C_SOURCES} ${RESOURCES} )
 add_custom_command(TARGET ${PROJECT_NAME} 
                    POST_BUILD COMMAND 
                    ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${PROJECT_NAME}> .. )
-target_link_libraries ( ${PROJECT_NAME} glfw3 glew32 freetype opengl32 SDL2  )
+target_link_libraries ( ${PROJECT_NAME} glfw3 glew32 freetype opengl32 )
 install (TARGETS ${PROJECT_NAME} RUNTIME DESTINATION . )
 

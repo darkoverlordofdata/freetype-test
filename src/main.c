@@ -13,6 +13,14 @@ GLuint VBO;
 GLFWwindow* window;
 Character Characters[CHAR_SIZE];
 
+float R = 0.2f;
+float G = 0.3f;
+float B = 0.3f;
+#ifdef __EMSCRIPTEN__
+float DELTA = 0.002f;
+#else
+float DELTA = 0.0002f;
+#endif
 
 int main(int argc, char** args) 
 {
@@ -37,7 +45,7 @@ int main(int argc, char** args)
     // Define the viewport dimensions
     glViewport(0, 0, WIDTH, HEIGHT);
     // Set OpenGL options
-    glEnable(GL_CULL_FACE);
+    // glEnable(GL_CULL_FACE);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -54,11 +62,11 @@ int main(int argc, char** args)
 
     FT_Library ft;
     if (FT_Init_FreeType(&ft))
-        printf("ERROR::FREETYPE: Could not init FreeType Library");
+        return Error("Could not init FreeType Library");
 
     FT_Face face;
     if (FT_New_Face(ft, "assets/LiberationSansBold.ttf", 0, &face))
-        printf("ERROR::FREETYPE: Failed to load font");
+        return Error("Failed to load font");
 
     FT_Set_Pixel_Sizes(face, 0, 48);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1); 
@@ -110,6 +118,7 @@ int main(int argc, char** args)
     glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, (int)(4 * sizeof(GLfloat)), (void*)0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 2); 
 
 
     #if (__EMSCRIPTEN__)
@@ -134,7 +143,14 @@ void Update()
     glfwPollEvents();
 
     // Clear the colorbuffer
-    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    glClearColor(R, G, B, 1.0f);
+    R += DELTA;
+    G += DELTA;
+    B += DELTA;
+    if (G > 0.7f || G < 0.3f)
+        DELTA = 0 - DELTA;
+    
+
     glClear(GL_COLOR_BUFFER_BIT);
 
     float v1[3] = { 0.5f, 0.8f, 0.2f };
@@ -192,4 +208,12 @@ void RenderText(char* text, float x, float y, float scale, float* color)
     }
     glBindVertexArray(0);
     glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+bool Error(char* msg)
+{
+    if (msg == NULL) return false;
+    printf("ERROR::FREETYPE: %s\n", msg);
+    return true;
+
 }
