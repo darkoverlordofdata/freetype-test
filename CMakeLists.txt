@@ -30,7 +30,6 @@ set ( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -lglfw3" )
 set ( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -lglew32" )
 set ( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -lfreetype" )
 set ( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -lopengl32" )
-set ( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -lSDL2" )
 
 set ( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -w -std=c99 -O3" )
 

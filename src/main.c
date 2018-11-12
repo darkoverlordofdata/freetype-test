@@ -1,46 +1,18 @@
-#include <stdio.h>
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
 
-#include "utils.h"
-#include "ft2build.h"
-#include FT_FREETYPE_H
-#ifdef __EMSCRIPTEN__
-#include "emscripten.h"
-#endif
+#include "main.h"
 
 const int WIDTH = 600;
 const int HEIGHT = 400;
 const int VERSION = 300;
 const char* PROFILE = "es";
+const int CHAR_SIZE = 128;
 
-GLFWwindow* window;
 GLuint ID;
 GLuint VAO;
 GLuint VBO;
+GLFWwindow* window;
+Character Characters[CHAR_SIZE];
 
-void Update();
-void RenderText(char* text, int length, float x, float y, float scale, float* color);
-
-typedef enum { false, true } bool;
-
-typedef struct IVec2
-{
-    int X;
-    int Y;
-
-} IVec2;
-
-typedef struct Character 
-{
-    GLuint TextureID;     // ID handle of the glyph texture
-    IVec2 Size;         // Size of glyph
-    IVec2 Bearing;      // Offset from baseline to left/top of glyph
-    long Advance;       // Horizontal offset to advance to next glyph
-
-} Character;
-
-Character Characters[128];
 
 int main(int argc, char** args) 
 {
@@ -69,6 +41,7 @@ int main(int argc, char** args)
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+    // Set an orthographic projection
     float projection[16] = {
         0.0025f,    0.0f,       0.0f,       0.0f,
         0.0f,       0.003333f,  0.0f,       0.0f,
@@ -90,7 +63,7 @@ int main(int argc, char** args)
     FT_Set_Pixel_Sizes(face, 0, 48);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1); 
 
-    for (unsigned char c = 0; c < 128; c++)
+    for (unsigned char c = 0; c < CHAR_SIZE; c++)
     {
         // if (FT_Load_Char(face, c, FT_LOAD_RENDER))
         if (FT_Load_Char(face, c, FT_LOAD_RENDER))
@@ -166,14 +139,14 @@ void Update()
 
     float v1[3] = { 0.5f, 0.8f, 0.2f };
     float v2[3] = { 0.3f, 0.7f, 0.9f };
-    RenderText("This is sample text", 19, 25.0f, 25.0f, 1.0f, v1);
-    RenderText("(C) LearnOpenGL.com", 19, 540.0f, 570.0f, 0.5f, v2);
+    RenderText("This is sample text", 25.0f, 25.0f, 1.0f, v1);
+    RenderText("Careful with that Axe, Eugene", 450.0f, 570.0f, 0.5f, v2);
 
     glfwSwapBuffers(window);
 
 }
 
-void RenderText(char* text, int length, float x, float y, float scale, float* color)
+void RenderText(char* text, float x, float y, float scale, float* color)
 {
     // Activate corresponding render state	
     glUseProgram(ID);
@@ -181,11 +154,13 @@ void RenderText(char* text, int length, float x, float y, float scale, float* co
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(VAO);
 
+    int length = strlen(text);
     // Iterate through all characters
-    // for (c = text.begin(); c != text.end(); c++) 
     for (int i=0; i<length; i++)
     {
         unsigned char c = text[i];
+        if (c > CHAR_SIZE) continue;
+
         Character ch = Characters[c];
 
         float xpos = x + ch.Bearing.X * scale;
