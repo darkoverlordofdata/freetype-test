@@ -1,11 +1,11 @@
 # freetype-test
 
-./configure
-cd build
-make
+    ./configure
+    cd build
+    make
 
-cd..
-./freetype-test
+    cd..
+    ./freetype-test
 
 
 # Error
